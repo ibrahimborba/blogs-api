@@ -1,13 +1,25 @@
-const joi = require('../helpers/joi');
+const joiHelper = require('../helpers/joi');
 
-const validator = (req, res, next) => {
+const loginValidator = (req, res, next) => {
   const { email, password } = req.body;
   const user = { email, password };
-  const { error } = joi.userSchema.validate(user);
+  const { error } = joiHelper.loginSchema.validate(user);
 
-  if (error) return res.status(400).json({ message: 'Some required fields are missing' });
+  console.log(error);
+  
+  if (error) return res.status(400).json({ message: error.message });
 
   next();
 };
 
-module.exports = { validator };
+const userValidator = (req, res, next) => {
+  const { displayName, email, password, image } = req.body;
+  const user = { displayName, email, password, image };
+  const { error } = joiHelper.userSchema.validate(user);
+
+  if (error) return res.status(400).json({ message: error.message });
+
+  next();
+};
+
+module.exports = { loginValidator, userValidator };

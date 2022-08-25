@@ -10,4 +10,14 @@ const login = async ({ email, password }) => {
   return token;
 };
 
-module.exports = { login };
+const add = async ({ displayName, email, password, image }) => {
+  const alreadyExists = await User.findOne({ where: { email } });
+  if (alreadyExists) return null;
+
+  const result = await User.create({ displayName, email, password, image });
+
+  const token = tokenHelper.create({ email: result.email });
+  return token;
+};
+
+module.exports = { login, add };

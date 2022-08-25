@@ -4,8 +4,7 @@ const userMiddleware = require('../middlewares/user.middleware');
 
 const router = express.Router();
 
-// Login
 router.route('/')
-  .post(userMiddleware.validator, userController.login);
+  .post(userMiddleware.userValidator, userController.add);
 
 module.exports = router;
