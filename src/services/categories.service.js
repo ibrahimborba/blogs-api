@@ -8,4 +8,6 @@ const add = async ({ name }) => {
   return result;
 };
 
-module.exports = { add };
+const getAll = async () => Category.findAll();
+
+module.exports = { add, getAll };

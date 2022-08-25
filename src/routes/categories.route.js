@@ -10,6 +10,7 @@ router.route('/')
     authMiddleware.tokenValidation,
     categoriesMiddleware.categoryValidator,
     categoriesController.add,
-  );
+  )
+  .get(authMiddleware.tokenValidation, categoriesController.getAll);
 
 module.exports = router;
