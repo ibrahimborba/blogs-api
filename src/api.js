@@ -1,10 +1,13 @@
 const express = require('express');
+const routes = require('./routes');
 
-// ... initial commit
+// ...
 
 const app = express();
 
 app.use(express.json());
+
+app.use('/login', routes.userRoute);
 
 // ...
 
