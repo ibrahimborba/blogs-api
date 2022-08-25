@@ -20,4 +20,6 @@ const add = async ({ displayName, email, password, image }) => {
   return token;
 };
 
-module.exports = { login, add };
+const getAll = async () => User.findAll({ attributes: { exclude: ['password'] } });
+
+module.exports = { login, add, getAll };
