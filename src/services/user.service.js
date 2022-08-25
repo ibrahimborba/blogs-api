@@ -22,4 +22,6 @@ const add = async ({ displayName, email, password, image }) => {
 
 const getAll = async () => User.findAll({ attributes: { exclude: ['password'] } });
 
-module.exports = { login, add, getAll };
+const getById = async (id) => User.findByPk(id, { attributes: { exclude: ['password'] } });
+
+module.exports = { login, add, getAll, getById };
