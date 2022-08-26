@@ -8,6 +8,7 @@ const BlogPost = (sequelize, DataTypes) => {
     userId: { type: DataTypes.INTEGER, foreignKey: true }
   },
   {
+    // Source:  https://github.com/sequelize/sequelize/issues/7822#issuecomment-1225470236
     createdAt: "published",
     updatedAt: "updated",
     tableName: 'BlogPosts'
