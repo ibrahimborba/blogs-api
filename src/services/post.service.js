@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { Op } = require('sequelize');
 const config = require('../database/config/config');
 const { User, BlogPost, Category, PostCategory } = require('../database/models');
 
@@ -22,15 +23,8 @@ const add = async ({ userId, title, content, categoryIds }) => {
 const getAll = async () => {
   const result = BlogPost.findAll({
     include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: { exclude: ['password'] },
-      },
-      {
-        model: Category,
-        as: 'categories',
-      },
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, as: 'categories' },
     ],
   });
 
@@ -40,15 +34,8 @@ const getAll = async () => {
 const getById = async (id) => {
   const result = await BlogPost.findByPk(id, {
     include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: { exclude: ['password'] },
-      },
-      {
-        model: Category,
-        as: 'categories',
-      },
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, as: 'categories' },
     ],
   });
   return result;
@@ -60,15 +47,8 @@ const update = async ({ userId, id, title, content }) => {
   const result = await BlogPost.findOne({
     where: { userId, id },
     include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: { exclude: ['password'] },
-      },
-      {
-        model: Category,
-        as: 'categories',
-      },
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, as: 'categories' },
     ],
   });
   return result;
@@ -82,4 +62,21 @@ const remove = async ({ userId, id }) => {
   return result;
 };
 
-module.exports = { add, getAll, getById, update, remove };
+const search = async ({ q }) => {
+  const result = BlogPost.findAll({
+    where: {
+      [Op.or]: [
+        { title: { [Op.like]: `%${q}%` } },
+        { content: { [Op.like]: `%${q}%` } },
+      ],
+    },
+    include: [
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, as: 'categories', through: { attributes: [] } },
+    ],
+  });
+
+  return result;
+};
+
+module.exports = { add, getAll, getById, update, remove, search };

@@ -11,6 +11,9 @@ router.route('/')
   )
   .get(authMiddleware.tokenValidation, postController.getAll);
 
+router.route('/search')
+  .get(authMiddleware.tokenValidation, postController.search);
+
 router.route('/:id')
   .get(authMiddleware.tokenValidation, postController.getById)
   .put(

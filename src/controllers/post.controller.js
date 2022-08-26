@@ -63,4 +63,14 @@ const remove = async (req, res, next) => {
   }
 };
 
-module.exports = { add, getAll, getById, update, remove };
+const search = async (req, res, next) => {
+  const { q } = req.query;
+  try {
+    const result = await postService.search({ q });
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { add, getAll, getById, update, remove, search };
