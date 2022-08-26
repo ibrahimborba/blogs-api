@@ -45,4 +45,16 @@ const getById = async (req, res, next) => {
   }
 };
 
-module.exports = { login, add, getAll, getById };
+const remove = async (req, res, next) => {
+  const { userId } = req;
+  try {
+    const result = await userService.remove({ userId });
+
+    if (!result) return res.status(401).json({ message: 'Unauthorized user' });
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { login, add, getAll, getById, remove };

@@ -12,4 +12,7 @@ router.route('/')
 router.route('/:id')
   .get(authMiddleware.tokenValidation, userController.getById);
 
+router.route('/me')
+  .delete(authMiddleware.tokenValidation, userController.remove);
+
 module.exports = router;

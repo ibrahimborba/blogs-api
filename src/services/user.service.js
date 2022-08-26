@@ -24,4 +24,9 @@ const getAll = async () => User.findAll({ attributes: { exclude: ['password'] } 
 
 const getById = async (id) => User.findByPk(id, { attributes: { exclude: ['password'] } });
 
-module.exports = { login, add, getAll, getById };
+const remove = async ({ userId }) => {
+  const result = await User.destroy({ where: { id: userId } });
+  return result;
+};
+
+module.exports = { login, add, getAll, getById, remove };
