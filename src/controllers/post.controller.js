@@ -22,4 +22,16 @@ const getAll = async (_req, res, next) => {
   }
 };
 
-module.exports = { add, getAll };
+const getById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const result = await postService.getById(id);
+    if (!result) return res.status(404).json({ message: 'Post does not exist' });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { add, getAll, getById };
