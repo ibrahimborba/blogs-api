@@ -74,4 +74,6 @@ const update = async ({ userId, id, title, content }) => {
   return result;
 };
 
+// delete
+
 module.exports = { add, getAll, getById, update };
