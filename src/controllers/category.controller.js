@@ -12,7 +12,7 @@ const add = async (req, res, next) => {
   }
 };
 
-const getAll = async (req, res, next) => {
+const getAll = async (_req, res, next) => {
   try {
     const result = await categoryService.getAll();
     return res.status(200).json(result);
