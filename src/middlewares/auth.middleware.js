@@ -4,7 +4,8 @@ const tokenValidation = (req, res, next) => {
   const { authorization } = req.headers;
   try {
     if (!authorization) return res.status(401).json({ message: 'Token not found' });
-    tokenHelper.verify(authorization);
+    const result = tokenHelper.verify(authorization);
+    req.userId = result.id;
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Expired or invalid token' });

@@ -2,6 +2,7 @@ const joi = require('joi');
 
 const REQUIRED_FIELD = 'Some required fields are missing';
 const MIN_LENGTH = '{#label} length must be at least {#limit} characters long';
+const NOT_FOUND = '{#label} not found';
 
 const loginSchema = joi.object({
   email: joi.string().required().messages({
@@ -43,4 +44,21 @@ const categorySchema = joi.object({
   }),
 });
 
-module.exports = { loginSchema, userSchema, categorySchema };
+const postSchema = joi.object({
+  title: joi.string().required().messages({
+    'any.required': REQUIRED_FIELD,
+    'string.empty': REQUIRED_FIELD,
+  }),
+  content: joi.string().required().messages({
+    'string.email': '{#label} must be a valid email',
+    'any.required': REQUIRED_FIELD,
+    'string.empty': REQUIRED_FIELD,
+  }),
+  categoryIds: joi.array().min(1).required().messages({
+    'array.min': NOT_FOUND,
+    'any.required': NOT_FOUND,
+    'string.empty': NOT_FOUND,    
+  }),
+});
+
+module.exports = { loginSchema, userSchema, categorySchema, postSchema };
