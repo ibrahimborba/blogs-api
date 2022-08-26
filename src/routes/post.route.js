@@ -12,6 +12,9 @@ router.route('/')
   .get(authMiddleware.tokenValidation, postController.getAll);
 
 router.route('/:id')
-  .get(authMiddleware.tokenValidation, postController.getById);
+  .get(authMiddleware.tokenValidation, postController.getById)
+  .put(
+    authMiddleware.tokenValidation, postMiddleware.updateValidator, postController.update,
+  );
 
 module.exports = router;

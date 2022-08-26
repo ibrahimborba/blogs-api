@@ -54,4 +54,24 @@ const getById = async (id) => {
   return result;
 };
 
-module.exports = { add, getAll, getById };
+const update = async ({ userId, id, title, content }) => {
+  await BlogPost.update({ title, content }, { where: { userId, id } });
+
+  const result = await BlogPost.findOne({
+    where: { userId, id },
+    include: [
+      {
+        model: User,
+        as: 'user',
+        attributes: { exclude: ['password'] },
+      },
+      {
+        model: Category,
+        as: 'categories',
+      },
+    ],
+  });
+  return result;
+};
+
+module.exports = { add, getAll, getById, update };

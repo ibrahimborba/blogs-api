@@ -2,8 +2,8 @@ const postService = require('../services/post.service');
 
 const add = async (req, res, next) => {
   const { userId } = req;
+  const { title, content, categoryIds } = req.body;
   try { 
-    const { title, content, categoryIds } = req.body;
     const result = await postService.add({ userId, title, content, categoryIds });
     if (!result) return res.status(400).json({ message: '"categoryIds" not found' });
 
@@ -34,4 +34,18 @@ const getById = async (req, res, next) => {
   }
 };
 
-module.exports = { add, getAll, getById };
+const update = async (req, res, next) => {
+  const { userId } = req;
+  const { id } = req.params;
+  const { title, content } = req.body;
+  try {
+    const result = await postService.update({ userId, id, title, content });
+    if (!result) return res.status(401).json({ message: 'Unauthorized user' });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { add, getAll, getById, update };
