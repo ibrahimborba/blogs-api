@@ -15,6 +15,7 @@ router.route('/:id')
   .get(authMiddleware.tokenValidation, postController.getById)
   .put(
     authMiddleware.tokenValidation, postMiddleware.updateValidator, postController.update,
-  );
+  )
+  .delete(authMiddleware.tokenValidation, postController.remove);
 
 module.exports = router;

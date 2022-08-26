@@ -74,6 +74,12 @@ const update = async ({ userId, id, title, content }) => {
   return result;
 };
 
-// delete
+const remove = async ({ userId, id }) => {
+  const itExist = await BlogPost.findOne({ where: { id } });
+  if (!itExist) return { notExist: !itExist };
 
-module.exports = { add, getAll, getById, update };
+  const result = await BlogPost.destroy({ where: { userId, id } });
+  return result;
+};
+
+module.exports = { add, getAll, getById, update, remove };
