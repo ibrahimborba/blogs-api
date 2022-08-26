@@ -8,6 +8,7 @@ const router = express.Router();
 router.route('/')
   .post(
     authMiddleware.tokenValidation, postMiddleware.postValidator, postController.add,
-  );
+  )
+  .get(authMiddleware.tokenValidation, postController.getAll);
 
 module.exports = router;
