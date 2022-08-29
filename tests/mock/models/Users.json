@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "username": "Lewis Hamilton",
+    "email": "lewishamilton@gmail.com",
+    "password": "123456"
+  },
+  {
+    "id": 2,
+    "username": "Michael Schumacher",
+    "email": "michaelschumacher@gmail.com",
+    "password": "123456"
+  }
+]
