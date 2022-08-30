@@ -27,7 +27,6 @@
     "test": "mocha ./tests/**/*$NAME*.test.js --exit",
     "test:coverage": "nyc --include='src/**/*.js' npm run test",
     "posttest": "npm run kill:test",
-    "test-coverage": "jest -i --verbose --forceExit --coverage",
     "debug": "nodemon .",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
   },
@@ -48,6 +47,7 @@
     "sequelize-cli": "6.2.0",
     "sequelize-jest-helpers": "^1.0.2",
     "sinon": "^14.0.0",
+    "sinon-chai": "^3.7.0",
     "supertest": "4.0.2",
     "wait-on": "^6.0.1"
   }
