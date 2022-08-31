@@ -23,10 +23,16 @@ const mockFindByPk = (Entity, id) => {
   return withoutPassword;
 };
 
+const mockCreate = (Entity, newUser) => {
+  Entity.push(newUser);
+  return newUser;
+};
+
 const User = {
   findAll: async () => mockFindAll(Users),
   findOne: async ({ where }) => mockFindOne(Users, where),
   findByPk: async (id) => mockFindByPk(Users, id),
+  create: async (newUser) => mockCreate(Users, newUser)
 };
 
 module.exports = {

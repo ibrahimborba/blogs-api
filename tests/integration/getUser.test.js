@@ -8,7 +8,7 @@ const { User: userMock } = require('../mock/models');
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('User GET routes', function () {
+describe('User routes', function () {
   let response;
   let loginResponse;
 
@@ -21,6 +21,8 @@ describe('User GET routes', function () {
   before(async function () {
     sinon.stub(User, 'findAll').callsFake(userMock.findAll);
     sinon.stub(User, 'findByPk').callsFake(userMock.findByPk);
+    sinon.stub(User, 'findOne').callsFake(userMock.findOne);
+    sinon.stub(User, 'create').callsFake(userMock.create);
 
     loginResponse = await chai.request(server)
     .post('/login')
@@ -33,9 +35,11 @@ describe('User GET routes', function () {
   after(function () {
     User.findAll.restore();
     User.findByPk.restore();
+    User.create.restore();
+    User.findOne.restore();
   });
 
-  describe('GET /user - Return all users', function () {
+  describe('GET /user', function () {
     before(async function () {
       response = await chai.request(server)
       .get('/user')
@@ -53,7 +57,7 @@ describe('User GET routes', function () {
     });
   });
 
-  describe('GET /user/:id - Return user by id', function () {
+  describe('GET /user/:id', function () {
     describe('With id from existing user', function () {
       before(async function () {
         response = await chai.request(server)
@@ -81,6 +85,60 @@ describe('User GET routes', function () {
       });
       it('response contains message with value "User does not exist"', function () {
         expect(response.body.message).to.be.equals('User does not exist');
+      });
+    });
+  });
+
+  describe('POST /user', function () {
+    describe('When user to be registered doesn\'t exist in database', function () {
+      const newUser = {
+        displayName: 'Brett Wiltshire',
+        email: 'brett@email.com',
+        password: '123456',
+        image:
+        'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+      };
+    
+      before(async function () {
+        response = await chai.request(server)
+        .post('/user')
+        .send(newUser);
+      });
+    
+      it('returns status code 201', function () {
+        expect(response).to.have.status(201);
+      });
+      it('response is an object', function () {
+        expect(response.body).to.be.an('object');
+      });
+      it('array elements are objects with expected values', function () {
+        expect(response.body).to.have.property('token');
+      });
+    });
+
+    describe('When user to be registered already exists in database', function () {
+      const existingUser = {
+        displayName: 'Lewis Hamilton',
+        email: 'lewishamilton@gmail.com',
+        password: '123456',
+        image:
+          'https://upload.wikimedia.org/wikipedia/commons/1/18/Lewis_Hamilton_2016_Malaysia_2.jpg',
+      };
+
+      before(async function () {
+        response = await chai.request(server)
+        .post('/user')
+        .send(existingUser);
+      });
+    
+      it('returns status code 409', function () {
+        expect(response).to.have.status(409);
+      });
+      it('response is an object', function () {
+        expect(response.body).to.be.an('object');
+      });
+      it('response contains message with value "User already registered"', function () {
+        expect(response.body.message).to.be.equals('User already registered');
       });
     });
   });
