@@ -25,7 +25,7 @@
     "drop": "npx sequelize-cli db:drop",
     "seed": "npx sequelize-cli db:seed:all",
     "test": "mocha ./tests/**/*$NAME*.test.js --exit",
-    "test:coverage": "nyc --include='src/**/*.js' npm run test",
+    "test:coverage": "nyc --include='src/**/*.js' --exclude='src/database/config' npm run test",
     "posttest": "npm run kill:test",
     "debug": "nodemon .",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
