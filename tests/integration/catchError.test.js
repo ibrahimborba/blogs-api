@@ -2,7 +2,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const chaiHttp = require('chai-http');
 const server = require('../../src/api');
-const { BlogPost } = require('../../src/database/models');
+const { User, BlogPost } = require('../../src/database/models');
 
 chai.use(chaiHttp);
 
@@ -10,6 +10,9 @@ const { expect } = chai;
 
 describe('When functions throw an error', function () {
   const ERROR_MESSAGE = 'Something went wrong';
+  const EXPECT_500 = 'returns status code 500';
+  const EXPECT_MESSAGE = 'response contains message with value "Error message"';
+
   let response;
   let loginResponse;
 
@@ -19,6 +22,77 @@ describe('When functions throw an error', function () {
     .send({
       email: 'lewishamilton@gmail.com',
       password: '123456',
+    });
+  });
+
+  describe('User routes', function () {
+    describe('findAll throws an error', function () {
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'findAll').throws(stubThrows);
+
+        response = await chai.request(server)
+        .get('/user')
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.findAll.restore(); });
+
+      it(EXPECT_500, function () {
+        expect(response).to.have.status(500);
+      });
+      it(EXPECT_MESSAGE, function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
+
+    describe('findByPk throws an error', function () {
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'findByPk').throws(stubThrows);
+
+        response = await chai.request(server)
+        .get('/user/id')
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.findByPk.restore(); });
+
+      it(EXPECT_500, function () {
+        expect(response).to.have.status(500);
+      });
+      it(EXPECT_MESSAGE, function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
+
+    describe('create throws an error', function () {
+      const newUser = {
+        displayName: 'Brett Wiltshire',
+        email: 'brett@email.com',
+        password: '123456',
+        image:
+        'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+      };
+
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'create').throws(stubThrows);
+
+        response = await chai.request(server)
+        .post('/user')
+        .send(newUser)
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.create.restore(); });
+
+      it(EXPECT_500, function () {
+        expect(response).to.have.status(500);
+      });
+      it(EXPECT_MESSAGE, function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
     });
   });
 
@@ -35,10 +109,10 @@ describe('When functions throw an error', function () {
 
       after(function () { BlogPost.findAll.restore(); });
 
-      it('returns status code 500', function () {
+      it(EXPECT_500, function () {
         expect(response).to.have.status(500);
       });
-      it('response contains message with value "Error message"', function () {
+      it(EXPECT_MESSAGE, function () {
         expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
@@ -55,10 +129,10 @@ describe('When functions throw an error', function () {
 
       after(function () { BlogPost.findByPk.restore(); });
 
-      it('returns status code 500', function () {
+      it(EXPECT_500, function () {
         expect(response).to.have.status(500);
       });
-      it('response contains message with value "Error message"', function () {
+      it(EXPECT_MESSAGE, function () {
         expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
@@ -82,10 +156,10 @@ describe('When functions throw an error', function () {
   
       after(function () { BlogPost.create.restore(); });
   
-      it('returns status code 500', function () {
+      it(EXPECT_500, function () {
         expect(response).to.have.status(500);
       });
-      it('response contains message with value "Error message"', function () {
+      it(EXPECT_MESSAGE, function () {
         expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
@@ -108,10 +182,10 @@ describe('When functions throw an error', function () {
   
       after(function () { BlogPost.update.restore(); });
   
-      it('returns status code 500', function () {
+      it(EXPECT_500, function () {
         expect(response).to.have.status(500);
       });
-      it('response contains message with value "Error message"', function () {
+      it(EXPECT_MESSAGE, function () {
         expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
