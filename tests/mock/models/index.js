@@ -1,4 +1,5 @@
 const Users = require('./Users.json');
+const BlogPosts = require('./BlogPosts.json');
 
 const mockFindOne = (Entity, where) => {
   if (!where) return Entity[0];
@@ -23,10 +24,24 @@ const mockFindByPk = (Entity, id) => {
   return withoutPassword;
 };
 
-const mockCreate = (Entity, newUser) => {
-  Entity.push(newUser);
-  return newUser;
+const mockCreate = (Entity, newInstance) => {
+  Entity.push(newInstance);
+  return newInstance;
 };
+
+const mockFindAndCountAll = (Entity, where) => {
+  if (!where) return Entity[0];
+  const options = Object.keys(where);
+  const result = Entity.filter((instance) => {
+    return options.every((option) => where[option]
+      .some((whereOption) => whereOption === instance[option]));
+  });
+  return { count: result.length, rows: result };
+};
+
+const mockBulkCreate = (Entity, newInstances) => {
+  newInstances.forEach((instance) => Entity.push(instance));
+}
 
 const User = {
   findAll: async () => mockFindAll(Users),
@@ -35,6 +50,23 @@ const User = {
   create: async (newUser) => mockCreate(Users, newUser)
 };
 
+const BlogPost = {
+  findAll: async () => mockFindAll(BlogPosts),
+  findByPk: async (id) => mockFindByPk(BlogPosts, id),
+  create: async (newPost) => mockCreate(BlogPosts, newPost),
+};
+
+const Category = {
+  findAndCountAll: async ({ where }) => mockFindAndCountAll(BlogPosts, where),
+}
+
+const PostCategory = {
+  bulkCreate: async (newPost) => mockBulkCreate(BlogPosts, newPost),
+}
+
 module.exports = {
   User,
+  BlogPost,
+  Category,
+  PostCategory
 };
