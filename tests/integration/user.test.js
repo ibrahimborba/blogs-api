@@ -150,7 +150,7 @@ describe('User routes', function () {
   });
 
   describe('When functions throw an error', function () {
-    const ERROR_MESSAGE = 'findAll returns all posts';
+    const ERROR_MESSAGE = 'Something went wrong';
 
     describe('findAll throws an error', function () {
       before(async function () {
