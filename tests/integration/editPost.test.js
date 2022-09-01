@@ -8,6 +8,7 @@ const {
 } = require('../mock/models');
 
 chai.use(chaiHttp);
+
 const { expect } = chai;
 
 describe('BlogPost edit routes', function () {
@@ -61,7 +62,7 @@ describe('BlogPost edit routes', function () {
     describe('When no category id exist in database', function () {
       const noCategory = {
         title: 'Latest updates, August 1st',
-        content: 'The whole text for the blog post goes here in this key',
+        content: 'The whole text for the blog post',
         categoryIds: [10],
       };
 
@@ -92,11 +93,11 @@ describe('BlogPost edit routes', function () {
 
     describe('Request with valid information', function () {
       before(async function () {
-        sinon.stub(BlogPost, 'update').returns(true);
-        sinon.stub(BlogPost, 'findOne').returns(editPost);
+        sinon.stub(BlogPost, 'update').callsFake(postMock.update);
+        sinon.stub(BlogPost, 'findOne').callsFake(postMock.findOne);
 
         response = await chai.request(server)
-        .put('/post/1')
+        .put('/post/2')
         .send(editPost)
         .set('authorization', loginResponse.body.token);
       });
@@ -109,20 +110,21 @@ describe('BlogPost edit routes', function () {
       it('returns status code 200', function () {
         expect(response).to.have.status(200);
       });
-      it('response is an object with title', function () {
-        expect(response.body.title).to.be.equal('Latest updates, August 1st');
+      it('response is an object with edited values', function () {
+        expect(response.body.title).to.be.equal(editPost.title);
+        expect(response.body.content).to.be.equal(editPost.content);
       });
     });
 
     describe('When a user tries to edit a post from another user', function () {
       before(async function () {
-        sinon.stub(BlogPost, 'update').returns(true);
-        sinon.stub(BlogPost, 'findOne').returns(false);
+        sinon.stub(BlogPost, 'update').callsFake(postMock.update);
+        sinon.stub(BlogPost, 'findOne').callsFake(postMock.findOne);
 
         const differentUser = await chai.request(server)
         .post('/login')
         .send({
-          email: 'lewishamilton@gmail.com',
+          email: 'michaelschumacher@gmail.com',
           password: '123456',
         });
                
@@ -169,6 +171,32 @@ describe('BlogPost edit routes', function () {
       });
 
       after(function () { BlogPost.create.restore(); });
+
+      it('returns status code 500', function () {
+        expect(response).to.have.status(500);
+      });
+      it('response contains message with value "Error message"', function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
+
+    describe('update throws an error', function () {
+      const editPost = {
+        title: 'Latest updates, August 1st',
+        content: 'The whole text for the blog post goes here in this key',
+      };
+
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(BlogPost, 'update').throws(stubThrows);
+
+        response = await chai.request(server)
+        .put('/post/1')
+        .send(editPost)
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { BlogPost.update.restore(); });
 
       it('returns status code 500', function () {
         expect(response).to.have.status(500);
