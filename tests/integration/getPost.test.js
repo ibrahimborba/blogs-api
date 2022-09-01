@@ -102,48 +102,4 @@ describe('BlogPost routes', function () {
       });
     });
   });
-
-  describe('When functions throw an error', function () {
-    const ERROR_MESSAGE = 'Something went wrong';
-
-    describe('findAll throws an error', function () {
-      before(async function () {
-        const stubThrows = { message: ERROR_MESSAGE };
-        sinon.stub(BlogPost, 'findAll').throws(stubThrows);
-
-        response = await chai.request(server)
-        .get('/post')
-        .set('authorization', loginResponse.body.token);
-      });
-
-      after(function () { BlogPost.findAll.restore(); });
-
-      it('returns status code 500', function () {
-        expect(response).to.have.status(500);
-      });
-      it('response contains message with value "Error message"', function () {
-        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
-      });
-    });
-
-    describe('findByPk throws an error', function () {
-      before(async function () {
-        const stubThrows = { message: ERROR_MESSAGE };
-        sinon.stub(BlogPost, 'findByPk').throws(stubThrows);
-
-        response = await chai.request(server)
-        .get('/post/id')
-        .set('authorization', loginResponse.body.token);
-      });
-
-      after(function () { BlogPost.findByPk.restore(); });
-
-      it('returns status code 500', function () {
-        expect(response).to.have.status(500);
-      });
-      it('response contains message with value "Error message"', function () {
-        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
-      });
-    });
-  });
 });
