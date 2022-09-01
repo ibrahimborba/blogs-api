@@ -10,7 +10,7 @@ const {
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('BlogPost routes', function () {
+describe('BlogPost edit routes', function () {
   let response;
   let loginResponse;
 
@@ -38,7 +38,7 @@ describe('BlogPost routes', function () {
 
     describe('Request with valid information', function () {
       const newPost = {
-        title: 'Latest updates, August 1st',
+        title: 'Latest updates, August 2st',
         content: 'The whole text for the blog post goes here in this key',
         categoryIds: [1, 2],
       };
@@ -54,7 +54,7 @@ describe('BlogPost routes', function () {
         expect(response).to.have.status(201);
       });
       it('response is an object with title', function () {
-        expect(response.body.title).to.be.equal('Latest updates, August 1st');
+        expect(response.body.title).to.be.equal('Latest updates, August 2st');
       });
     });
 
@@ -80,6 +80,71 @@ describe('BlogPost routes', function () {
       });
       it('response contains message with value "categoryIds" not found"', function () {
         expect(response.body.message).to.be.equals('"categoryIds" not found');
+      });
+    });
+  });
+
+  describe('PUT /post/:id', function () {
+    const editPost = {
+      title: 'Latest updates, August 1st',
+      content: 'The whole text for the blog post goes here in this key',
+    };
+
+    describe('Request with valid information', function () {
+      before(async function () {
+        sinon.stub(BlogPost, 'update').returns(true);
+        sinon.stub(BlogPost, 'findOne').returns(editPost);
+
+        response = await chai.request(server)
+        .put('/post/1')
+        .send(editPost)
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () {
+        BlogPost.update.restore();
+        BlogPost.findOne.restore();
+      });
+
+      it('returns status code 200', function () {
+        expect(response).to.have.status(200);
+      });
+      it('response is an object with title', function () {
+        expect(response.body.title).to.be.equal('Latest updates, August 1st');
+      });
+    });
+
+    describe('When a user tries to edit a post from another user', function () {
+      before(async function () {
+        sinon.stub(BlogPost, 'update').returns(true);
+        sinon.stub(BlogPost, 'findOne').returns(false);
+
+        const differentUser = await chai.request(server)
+        .post('/login')
+        .send({
+          email: 'lewishamilton@gmail.com',
+          password: '123456',
+        });
+               
+        response = await chai.request(server)
+        .put('/post/1')
+        .send(editPost)
+        .set('authorization', differentUser.body.token);
+      });
+
+      after(function () {
+        BlogPost.update.restore();
+        BlogPost.findOne.restore();
+      });
+    
+      it('returns status code 401', function () {
+        expect(response).to.have.status(401);
+      });
+      it('response is an object', function () {
+        expect(response.body).to.be.an('object');
+      });
+      it('response contains message with value "Unauthorized user"', function () {
+        expect(response.body.message).to.be.equals('Unauthorized user');
       });
     });
   });

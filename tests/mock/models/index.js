@@ -1,5 +1,6 @@
 const Users = require('./Users.json');
 const BlogPosts = require('./BlogPosts.json');
+const { map } = require('../../../src/api');
 
 const mockFindOne = (Entity, where) => {
   if (!where) return Entity[0];
@@ -43,6 +44,17 @@ const mockBulkCreate = (Entity, newInstances) => {
   newInstances.forEach((instance) => Entity.push(instance));
 }
 
+const mockUpdate = (Entity, _fields, { where }) => {
+  const options = Object.keys(where);
+  console.log('WHERE', options);
+  const result = Entity.find((instance) => {
+    return options.every((option) => where[option] === instance[option]);
+  });
+  console.log('RESULT', result);
+  if(!result) return false;
+  return true;
+};
+
 const User = {
   findAll: async () => mockFindAll(Users),
   findOne: async ({ where }) => mockFindOne(Users, where),
@@ -52,8 +64,10 @@ const User = {
 
 const BlogPost = {
   findAll: async () => mockFindAll(BlogPosts),
+  findOne: async ({ where }) => mockFindOne(BlogPosts, where),
   findByPk: async (id) => mockFindByPk(BlogPosts, id),
   create: async (newPost) => mockCreate(BlogPosts, newPost),
+  update: async (fields, where) => mockUpdate(BlogPosts, fields, where),
 };
 
 const Category = {
