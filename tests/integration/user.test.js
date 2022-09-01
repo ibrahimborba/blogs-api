@@ -19,11 +19,6 @@ describe('User routes', function () {
   };
 
   before(async function () {
-    sinon.stub(User, 'findAll').callsFake(userMock.findAll);
-    sinon.stub(User, 'findByPk').callsFake(userMock.findByPk);
-    sinon.stub(User, 'findOne').callsFake(userMock.findOne);
-    sinon.stub(User, 'create').callsFake(userMock.create);
-
     loginResponse = await chai.request(server)
     .post('/login')
     .send({
@@ -32,19 +27,16 @@ describe('User routes', function () {
     });
   });
 
-  after(function () {
-    User.findAll.restore();
-    User.findByPk.restore();
-    User.create.restore();
-    User.findOne.restore();
-  });
-
   describe('GET /user', function () {
     before(async function () {
+      sinon.stub(User, 'findAll').callsFake(userMock.findAll);
+
       response = await chai.request(server)
       .get('/user')
       .set('authorization', loginResponse.body.token);
     });
+
+    after(function () { User.findAll.restore(); });
   
     it('returns status code 200', function () {
       expect(response).to.have.status(200);
@@ -58,6 +50,10 @@ describe('User routes', function () {
   });
 
   describe('GET /user/:id', function () {
+    before(async function () { sinon.stub(User, 'findByPk').callsFake(userMock.findByPk); });
+
+    after(function () { User.findByPk.restore(); });
+
     describe('With id from existing user', function () {
       before(async function () {
         response = await chai.request(server)
@@ -90,6 +86,16 @@ describe('User routes', function () {
   });
 
   describe('POST /user', function () {
+    before(async function () {
+      sinon.stub(User, 'findOne').callsFake(userMock.findOne);
+      sinon.stub(User, 'create').callsFake(userMock.create);
+    });
+
+    after(function () {
+      User.create.restore();
+      User.findOne.restore();
+    });
+  
     describe('When user to be registered doesn\'t exist in database', function () {
       const newUser = {
         displayName: 'Brett Wiltshire',
@@ -139,6 +145,79 @@ describe('User routes', function () {
       });
       it('response contains message with value "User already registered"', function () {
         expect(response.body.message).to.be.equals('User already registered');
+      });
+    });
+  });
+
+  describe('When functions throw an error', function () {
+    const ERROR_MESSAGE = 'findAll returns all posts';
+
+    describe('findAll throws an error', function () {
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'findAll').throws(stubThrows);
+
+        response = await chai.request(server)
+        .get('/user')
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.findAll.restore(); });
+
+      it('returns status code 500', function () {
+        expect(response).to.have.status(500);
+      });
+      it('response contains message with value "Error message"', function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
+
+    describe('findByPk throws an error', function () {
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'findByPk').throws(stubThrows);
+
+        response = await chai.request(server)
+        .get('/user/id')
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.findByPk.restore(); });
+
+      it('returns status code 500', function () {
+        expect(response).to.have.status(500);
+      });
+      it('response contains message with value "Error message"', function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
+
+    describe('create throws an error', function () {
+      const newUser = {
+        displayName: 'Brett Wiltshire',
+        email: 'brett@email.com',
+        password: '123456',
+        image:
+        'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+      };
+
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'create').throws(stubThrows);
+
+        response = await chai.request(server)
+        .post('/user')
+        .send(newUser)
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.create.restore(); });
+
+      it('returns status code 500', function () {
+        expect(response).to.have.status(500);
+      });
+      it('response contains message with value "Error message"', function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
   });
