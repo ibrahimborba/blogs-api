@@ -12,7 +12,6 @@ const add = async ({ userId, title, content, categoryIds }) => {
 
     return post;
   });
-
   return result;
 };
 
@@ -20,10 +19,9 @@ const getAll = async () => {
   const result = BlogPost.findAll({
     include: [
       { model: User, as: 'user', attributes: { exclude: ['password'] } },
-      { model: Category, as: 'categories' },
+      { model: Category, as: 'categories', through: { attributes: [] } },
     ],
   });
-
   return result;
 };
 
@@ -31,7 +29,7 @@ const getById = async (id) => {
   const result = await BlogPost.findByPk(id, {
     include: [
       { model: User, as: 'user', attributes: { exclude: ['password'] } },
-      { model: Category, as: 'categories' },
+      { model: Category, as: 'categories', through: { attributes: [] } },
     ],
   });
   return result;
@@ -44,7 +42,7 @@ const update = async ({ userId, id, title, content }) => {
     where: { userId, id },
     include: [
       { model: User, as: 'user', attributes: { exclude: ['password'] } },
-      { model: Category, as: 'categories' },
+      { model: Category, as: 'categories', through: { attributes: [] } },
     ],
   });
   return result;

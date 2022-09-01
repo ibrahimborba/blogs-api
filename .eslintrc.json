@@ -1,7 +1,26 @@
 {
   "root": true,
-  "extends": ["trybe-backend"],
+  "env": {
+    "mocha": true
+  },
+  "extends": [
+    "trybe-backend", 
+    "plugin:mocha/recommended"
+  ],
+  "plugins": ["mocha"],
   "rules": {
     "sonarjs/no-duplicate-string": ["error", 5]
-  }
+  },
+  "overrides": [
+    {
+      "files": "*.test.js",
+      "rules": {
+        "no-unused-expressions": "off",
+        "prefer-arrow-callback": 0,
+        "func-names": 0,
+        "max-lines-per-function": ["error", 250]
+      }
+    }
+  ]
+
 }
