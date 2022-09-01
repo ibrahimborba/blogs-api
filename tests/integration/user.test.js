@@ -149,75 +149,37 @@ describe('User routes', function () {
     });
   });
 
-  describe('When functions throw an error', function () {
-    const ERROR_MESSAGE = 'Something went wrong';
-
-    describe('findAll throws an error', function () {
-      before(async function () {
-        const stubThrows = { message: ERROR_MESSAGE };
-        sinon.stub(User, 'findAll').throws(stubThrows);
+  describe('DELETE /user/me', function () {
+    describe('Request with valid information', function () {
+      it('returns status code 204', async function () {
+        sinon.stub(User, 'destroy').callsFake(userMock.destroy);
 
         response = await chai.request(server)
-        .get('/user')
+        .delete('/user/me')
         .set('authorization', loginResponse.body.token);
-      });
+        
+        expect(response).to.have.status(204);
 
-      after(function () { User.findAll.restore(); });
-
-      it('returns status code 500', function () {
-        expect(response).to.have.status(500);
-      });
-      it('response contains message with value "Error message"', function () {
-        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+        User.destroy.restore();
       });
     });
 
-    describe('findByPk throws an error', function () {
+    describe('When a user tries to delete another user', function () {
       before(async function () {
-        const stubThrows = { message: ERROR_MESSAGE };
-        sinon.stub(User, 'findByPk').throws(stubThrows);
+        sinon.stub(User, 'destroy').returns(null);
 
         response = await chai.request(server)
-        .get('/user/id')
+        .delete('/user/me')
         .set('authorization', loginResponse.body.token);
       });
 
-      after(function () { User.findByPk.restore(); });
-
-      it('returns status code 500', function () {
-        expect(response).to.have.status(500);
+      after(function () { User.destroy.restore(); });
+    
+      it('returns status code 401', function () {
+        expect(response).to.have.status(401);
       });
-      it('response contains message with value "Error message"', function () {
-        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
-      });
-    });
-
-    describe('create throws an error', function () {
-      const newUser = {
-        displayName: 'Brett Wiltshire',
-        email: 'brett@email.com',
-        password: '123456',
-        image:
-        'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-      };
-
-      before(async function () {
-        const stubThrows = { message: ERROR_MESSAGE };
-        sinon.stub(User, 'create').throws(stubThrows);
-
-        response = await chai.request(server)
-        .post('/user')
-        .send(newUser)
-        .set('authorization', loginResponse.body.token);
-      });
-
-      after(function () { User.create.restore(); });
-
-      it('returns status code 500', function () {
-        expect(response).to.have.status(500);
-      });
-      it('response contains message with value "Error message"', function () {
-        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      it('response contains message with value "Unauthorized user"', function () {
+        expect(response.body.message).to.be.equals('Unauthorized user');
       });
     });
   });

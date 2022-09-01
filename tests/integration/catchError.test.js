@@ -94,6 +94,26 @@ describe('When functions throw an error', function () {
         expect(response.body.message).to.be.equals(ERROR_MESSAGE);
       });
     });
+
+    describe('destroy throws an error', function () {
+      before(async function () {
+        const stubThrows = { message: ERROR_MESSAGE };
+        sinon.stub(User, 'destroy').throws(stubThrows);
+
+        response = await chai.request(server)
+        .delete('/user/me')
+        .set('authorization', loginResponse.body.token);
+      });
+
+      after(function () { User.destroy.restore(); });
+
+      it(EXPECT_500, function () {
+        expect(response).to.have.status(500);
+      });
+      it(EXPECT_MESSAGE, function () {
+        expect(response.body.message).to.be.equals(ERROR_MESSAGE);
+      });
+    });
   });
 
   describe('Post routes', function () {

@@ -69,9 +69,6 @@ const mockDestroy = (Entity, where) => {
   });
   if(!result) return null;
 
-  Entity.filter((instance) => {
-    return options.every((option) => where[option] !== instance[option]);
-  });
   return result;
 };
 
@@ -79,7 +76,8 @@ const User = {
   findAll: async () => mockFindAll(Users),
   findOne: async ({ where }) => mockFindOne(Users, where),
   findByPk: async (id) => mockFindByPk(Users, id),
-  create: async (newUser) => mockCreate(Users, newUser)
+  create: async (newUser) => mockCreate(Users, newUser),
+  destroy: async ({ where }) => mockDestroy(Users, where),
 };
 
 const BlogPost = {

@@ -191,7 +191,7 @@ describe('BlogPost edit routes', function () {
       });
     });
 
-    describe('When the psot doesn\'t exist', function () {
+    describe('When the post doesn\'t exist', function () {
       before(async function () {
         response = await chai.request(server)
         .delete('/post/id')
