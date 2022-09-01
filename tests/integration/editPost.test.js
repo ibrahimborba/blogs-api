@@ -142,11 +142,67 @@ describe('BlogPost edit routes', function () {
       it('returns status code 401', function () {
         expect(response).to.have.status(401);
       });
-      it('response is an object', function () {
-        expect(response.body).to.be.an('object');
+      it('response contains message with value "Unauthorized user"', function () {
+        expect(response.body.message).to.be.equals('Unauthorized user');
+      });
+    });
+  });
+
+  describe('DELETE /post/:id', function () {
+    beforeEach(function () {
+      sinon.stub(BlogPost, 'destroy').callsFake(postMock.destroy);
+      sinon.stub(BlogPost, 'findOne').callsFake(postMock.findOne);
+    });
+
+    afterEach(function () {
+      BlogPost.destroy.restore();
+      BlogPost.findOne.restore();
+    });
+
+    describe('Request with valid information', function () {
+      it('returns status code 204', async function () {
+        response = await chai.request(server)
+        .delete('/post/2')
+        .set('authorization', loginResponse.body.token);
+        
+        expect(response).to.have.status(204);
+      });
+    });
+
+    describe('When a user tries to delete a post from another user', function () {
+      before(async function () {
+        const differentUser = await chai.request(server)
+        .post('/login')
+        .send({
+          email: 'michaelschumacher@gmail.com',
+          password: '123456',
+        });
+               
+        response = await chai.request(server)
+        .delete('/post/1')
+        .set('authorization', differentUser.body.token);
+      });
+    
+      it('returns status code 401', function () {
+        expect(response).to.have.status(401);
       });
       it('response contains message with value "Unauthorized user"', function () {
         expect(response.body.message).to.be.equals('Unauthorized user');
+      });
+    });
+
+    describe('When the psot doesn\'t exist', function () {
+      before(async function () {
+        response = await chai.request(server)
+        .delete('/post/id')
+        .set('authorization', loginResponse.body.token);
+      });
+    
+      it('returns status code 404', function () {
+        expect(response).to.have.status(404);
+      });
+      it('response contains message with value "Post does not exist"', function () {
+        expect(response.body.message).to.be.equals('Post does not exist');
       });
     });
   });

@@ -9,7 +9,6 @@ const mockFindOne = (Entity, where) => {
   const result = Entity.find((instance) => {
     return options.every((option) => where[option] === instance[option]);
   });
-
   return result;
 };
 
@@ -70,8 +69,9 @@ const mockDestroy = (Entity, where) => {
   });
   if(!result) return null;
 
-  const editFields = Object.keys(fields);
-  editFields.forEach((field) => result[field] = fields[field]);
+  Entity.filter((instance) => {
+    return options.every((option) => where[option] !== instance[option]);
+  });
   return result;
 };
 
