@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: pull_request
 
 jobs:
   eslint:
@@ -25,8 +25,8 @@ jobs:
             node-version: 16
         - name: Run docker compose
           run: docker-compose up -d
-        - name: Checks containers
-          run: docker ps
+        - name: Exec container
+          run: docker exec blogs_api bash
         - name: Install dependencies
           run: npm install
         - name: Runs mocha tests
