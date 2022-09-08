@@ -9,6 +9,7 @@ A RESTful API that uses MSC architecture to manage a Blog's posts and users. Dev
 - [Technologies, tools and architectures used](#technologies-tools-and-architectures-used)
 - [Installing and running the app](#installing-and-running-the-app)
 - [Notes](#notes)
+  - [Documentation](#documentation)
   - [Code quality](#code-quality)
   - [Git, GitHub and Commits](#git-github-and-commits)
 
@@ -71,6 +72,8 @@ npm run lint
 ```
 
 # Notes
+## Documentation
+API's documentation can be [found here](https://documenter.getpostman.com/view/22534963/VVBXxRKC).
 ## Code quality
 To enforce Clean Code and good practices, the following standards and resources were used in this project:
 * __Linter__ | Developed following the Clean Code standards specified by [Trybe's ESLint](https://github.com/betrybe/eslint-config-trybe).
