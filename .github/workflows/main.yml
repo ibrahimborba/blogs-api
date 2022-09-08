@@ -15,7 +15,7 @@ jobs:
         - name: Runs lint
           run: npm run lint
   mocha:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     services:
       mysql:
         image: mysql:8.0.21
