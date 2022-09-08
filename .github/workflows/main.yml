@@ -26,4 +26,10 @@ jobs:
         - name: Install dependencies
           run: npm install
         - name: Runs mocha tests
+          env:
+            MYSQL_USER: root
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_PASSWORD: password
+            HOSTNAME: db
+            JWT_SECRET: secretJWT
           run: npm run test
