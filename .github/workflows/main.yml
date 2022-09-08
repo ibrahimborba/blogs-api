@@ -14,29 +14,3 @@ jobs:
           run: npm install
         - name: Runs lint
           run: npm run lint
-  mocha:
-    runs-on: self-hosted
-    services:
-      mysql:
-        image: mysql:8.0.21
-        env:
-          MYSQL_ROOT_PASSWORD: 'password'
-        ports:
-          - 3306:3306
-          - 33060:33060
-    steps:
-        - name: Check Git repository
-          uses: actions/checkout@v2
-        - name: Install node
-          uses: actions/setup-node@v1
-          with:
-            node-version: 16
-        - name: Install dependencies
-          run: npm install
-        - name: Runs mocha tests
-          env:
-            MYSQL_USER: 'root'
-            MYSQL_PASSWORD: 'password'
-            HOSTNAME: 'mysql'
-            JWT_SECRET: 'secretJWT'
-          run: npm run test
