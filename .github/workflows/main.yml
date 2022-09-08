@@ -25,6 +25,8 @@ jobs:
             node-version: 16
         - name: Run docker compose
           run: docker-compose up -d
+        - name: Checks containers
+          run: docker ps
         - name: Install dependencies
           run: npm install
         - name: Runs mocha tests
