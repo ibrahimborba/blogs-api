@@ -5,9 +5,11 @@ const stubMiddleware = async (controller, request = {}) => {
     body: undefined,
     status: undefined,
   };
-  // allow to create response stubs
-  // eslint-disable-next-line sonarjs/prefer-object-literal
-  const response = {};
+
+  const response = {
+    status: undefined,
+    json: undefined,
+  };
   response.status = sinon.stub().returns(response);
   response.json = sinon.stub().returns();
   const next = sinon.stub().returns();
