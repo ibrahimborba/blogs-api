@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: pull_request
 
 jobs:
   eslint:
@@ -35,9 +35,11 @@ jobs:
           run: npm install
         - name: Runs mocha tests
           env:
+            MYSQL_HOST: db
             MYSQL_USER: root
             MYSQL_PASSWORD: password
             MYSQL_PORT: 3306
-            HOSTNAME: 'db'
+            MYSQL_DB_NAME: blogs-api
+            HOSTNAME: db
             JWT_SECRET: secretJWT
           run: npm run test
