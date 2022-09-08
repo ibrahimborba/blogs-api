@@ -1,0 +1,16 @@
+on: pull_request
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Check Git repository
+          uses: actions/checkout@v2
+        - name: Install node
+          uses: actions/setup-node@v1
+          with:
+            node-version: 16
+        - name: Install dependencies
+          run: npm install
+        - name: Runs lint
+          run: npm run lint
