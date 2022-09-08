@@ -26,7 +26,6 @@ jobs:
         - name: Run docker compose
           run: docker-compose up -d
         - name: Install dependencies
-          run: docker ps
           run: npm install
         - name: Runs mocha tests
           run: npm run test
