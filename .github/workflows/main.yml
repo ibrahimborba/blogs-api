@@ -26,7 +26,7 @@ jobs:
         - name: Run docker compose
           run: docker-compose up -d
         - name: Exec container
-          run: docker exec blogs_api bash
+          run: docker exec -it blogs_api bash
         - name: Install dependencies
           run: npm install
         - name: Runs mocha tests
