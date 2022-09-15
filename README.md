@@ -29,6 +29,10 @@ This project used the following technologies and tools:
   * __MSC Architecture__ | [Improve code organization, maintenance and scalability](https://martinfowler.com/architecture/).
   * __REST Architecture__ | [Simple architecture and highly popular](https://restfulapi.net/).
 
+*Blogs API Tests and MSC architecture diagram.*
+
+<img src="./images/architecture.png" width="500" alt="Blogs API architecture">
+
 # Installing and running the app
 ### Install dependencies
 ```
